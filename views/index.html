@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title> 농산물 이력 관리 </title>
+  <meta charset="utf-8">
+  <script src="https://code.jquery.com/jquery-latest.js "></script>
+  <link rel='stylesheet' href='./css/style.css' type='text/css' />
+  <script type="text/javascript">
+
+    $(document).ready(function () {
+      getListAll()
+
+      $("form").submit(function (event) {
+        // Stop form from submitting normally
+        event.preventDefault();
+        console.log('form ');
+
+        /* Serialize the submitted form control values to be sent to the web server with the request */
+        let formValues = $(this).serialize();
+
+        // Send the form data using post
+        $.post("/submit", formValues, function (data) {
+          // Display the returned data in browser
+          // $("#result").html(data);
+
+          console.log('success : ', data);
+          getList()
+
+        });  // end of post
+      });  // end of submit
+    });  // end of ready
+
+    function getListAll() {
+      // Send the form data using post
+      $.get("/listall", function (data) {
+        console.log('data.getLists : ', data.getLists);
+        let productList = data.getLists;
+        let table = document.getElementById("table1");
+        for (let i = 0; i < productList.length; i++) {
+          let cnt = productList.length - 1 - i;
+          let product = productList[cnt];
+          processTable(product)
+        }  // end of for
+      });  // end of post
+    }  // end of getListAll
+
+    function processTable(getProduct) {
+      let table = document.getElementById("table1");
+      let toString = getProduct.toString();
+      console.log("getProduct: " + getProduct);
+      console.log("processTable: " + toString);
+      let strArray = toString.split(",");
+      let timestamp = new Date(strArray[3] * 1000);
+      //console.log("timestamp: " + timestamp);
+      //console.log("strArray: " + strArray[3] * 1000);
+
+      let row = table.insertRow();
+      let cell1 = row.insertCell(0);
+      let cell2 = row.insertCell(1);
+      let cell3 = row.insertCell(2);
+      let cell4 = row.insertCell(3);
+      cell1.innerHTML = strArray[0];
+      cell2.innerHTML = strArray[1];
+      cell3.innerHTML = strArray[2];
+      cell4.style.width = "60%";
+      cell4.innerHTML = timestamp;
+    }
+
+    function getList() {
+      // Send the form data using post
+      $.get("/list", function (data) {
+        console.log('data.getLists : '+ data.getLists);
+        //let toString = data.getLists.toString();
+        //console.log('data.getLists++ : '+ toString);
+        //let jsonStr = JSON.stringify(data.getLists);
+        //console.log("jsonStr: "+  jsonStr);
+
+        // let strArray = toString.split(",");
+        // let timestamp = new Date(strArray[3] * 1000);
+        //console.log("timestamp: " + timestamp);
+        //console.log("timestamp: " + strArray[3] * 1000);
+        //console.log("strArray: " + strArray[0] + ", " + strArray[1] + ", " + strArray[2] + ", " + timestamp);
+        //getListAll()
+
+        processTable(data.getLists)
+      });  // end of get
+    }  // end of getListAll
+  </script>
+</head>
+
+
+<body>
+  <h1> 농산물 이력 관리 </h1>
+  <form>
+    <label>수량:
+      <input type="text" name="pronumber" placeholder="How many..">
+    </label>
+    <br>
+    <label>품명:
+      <input type="text" name="proname" placeholder="What is ..">
+    </label>
+    <br>
+    <label>지역:
+      <input type="text" name="proloc" placeholder="Where is ..">
+    </label>
+    <br>
+    <label>제출:
+      <input type="submit" value="Send">
+    </label>
+  </form>
+  <div id="message"></div>
+  <table style="width:100%" id="table1"></table>
+</body>
+</html>

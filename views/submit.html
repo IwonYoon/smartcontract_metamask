@@ -1,0 +1,68 @@
+<!Doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://code.jquery.com/jquery-latest.js "></script>
+
+<!-- bootsrtap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+<title>Blocko Coinstack</title>
+</head>
+
+<body>
+<form action="" id="inputForm">
+  <input type="text" id="number" value="12" name="number" placeholder="Search...">
+  <input type="text" id="name" value="mandarin" name="name" placeholder="Search...">
+  <input type="text" id="location" value="jeju" name="location" placeholder="Search...">
+  <input type="submit" value="Search">
+</form>
+<!-- the result of the search will be rendered inside this div -->
+<div id="message"></div>
+ 
+<script>
+// Attach a submit handler to the form
+$("#inputForm").click(function( event ) {
+
+  console.log('event : ' , event);
+  $('#message').text(" account: " );
+ 
+  // Stop form from submitting normally
+  event.preventDefault();
+  
+  $.ajax({
+      url:'/submit',//요청URL
+      type: 'POST',
+      contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+      //data:{'number': 10, 'name':'dragon', 'location':'Jeju'}, //서버쪽에 전달할 데이터
+      data : $("#inputForm").serialize(),
+      dataType:'json',
+      success:function(data){
+        $('#message').append(data);
+        $('#message').text(" account: " + data.result);
+        console.log('data : ' + data);
+      },
+      error:function(e){
+        //alert(e);
+      }
+    });  
+ 
+  // Get some values from elements on the page:
+  //var $form = $( this ),
+    //term = $form.find( "input[name='s']" ).val(),
+    //url = $form.attr( "action" );
+ 
+  // Send the data using post
+  //var posting = $.post( url, { s: term } );
+ 
+  // Put the results in a div
+  //posting.done(function( data ) {
+    //var content = $( data ).find( "#content" );
+    //$( "#result" ).empty().append( content );
+  //});
+});
+</script>
+</body>
+</html>
